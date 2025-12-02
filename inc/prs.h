@@ -21,7 +21,6 @@ typedef struct {
 } Tok;
 
 extern Tok TOK_EOF;
-extern C *LEX_ERR;
 extern Tok *LEX_TOKS;
 
 C *tok_tostr(Tok *t);

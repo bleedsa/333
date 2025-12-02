@@ -12,7 +12,11 @@ I main(I argc, C **argv) {
 	if (argc < 2) fatal("usage: %s [expr]", argv[0]);
 
 	err = lex(argv[1]);
-	if (!(err == NULL)) fatal("%s", err);
+	if (err != NULL) {
+		eprintln("%s", err);
+		free(err);
+		return -1;
+	}
 
 	for (i = 0, t = *LEX_TOKS; tok_is(&t); i++, t = LEX_TOKS[i]) {
 		str = tok_tostr(&t);
@@ -20,5 +24,6 @@ I main(I argc, C **argv) {
 		free(str);
 	}
 
+	free(LEX_TOKS);
 	return 0;
 }

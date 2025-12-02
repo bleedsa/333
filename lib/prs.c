@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <err.h>
 #include <prs.h>
 
 typedef enum {
@@ -27,7 +28,6 @@ typedef enum {
 } LexState;
 
 Tok TOK_EOF = {0, {0, 0}, 0, 0};
-C *LEX_ERR = 0;
 Tok *LEX_TOKS;
 
 static CC *VERB_CHRS = "!@#$%^&*_+~-=|:'<>?/.,\\";
@@ -40,11 +40,6 @@ static CC *VERB2_CHRS = ".:";
 
 inl bool isverb2(C c) {
 	return !!(strchr(VERB2_CHRS, c));
-}
-
-#define ERR(f...) { \
-	if (!asprintf(&LEX_ERR, "error: 'lex: " f)) {fatal("asprintf()!!");} \
-	else return LEX_ERR; \
 }
 
 C *tok_tostr(Tok *t) {
@@ -76,7 +71,7 @@ C *lex(C *src) {
 
 	for (c = *src; true; src++, c = *src, pos_inc(&p)) {
 	start:
-		println("%c %d %d", c, c, state);
+		println("%c %d", c, c, state);
 		switch (state) {
 		/* unknown state. switch based on char type to set new state */
 		case LEX_UNK: {
@@ -89,7 +84,9 @@ C *lex(C *src) {
 			else if (c == '"')   {state = LEX_QUOTE;goto init;}
 			else if (c == '-' && isdigit(*(src + 1))) {
 				state = LEX_NEG; goto init;
-			} else ERR("invalid char during lexer pass: %c", c)
+			} else return err_lex(
+				p, "invalid char during lexer pass: %c", c
+			);
 			break;
 
 		init:
@@ -153,6 +150,7 @@ C *lex(C *src) {
 		/* a string body */
 		case LEX_STR:
 			if (c == '"') state = LEX_QUOTE_R;
+			else if (!c) return err_lex(p, "unclosed string");
 			else tlen++;
 			break;
 
@@ -167,7 +165,6 @@ C *lex(C *src) {
 
 		/* finish lexing a tok and add it to the vec */
 		push: {
-			println("tlen: %zu", tlen);
 			state = LEX_UNK;
 			lex_toks_reZ(&cap, &len);
 			LEX_TOKS[len++] = (Tok){
