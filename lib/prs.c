@@ -144,6 +144,23 @@ C *lex(C *src) {
 			goto push;
 		}
 
+		/* start a string */
+		case LEX_QUOTE:
+			state = LEX_STR;
+			ptr++;
+			break;
+
+		/* a string body */
+		case LEX_STR:
+			if (c == '"') state = LEX_QUOTE_R;
+			else tlen++;
+			break;
+
+		/* rhs string quote */
+		case LEX_QUOTE_R:
+			ty = TOK_STR;
+			goto push;
+
 		/* should be unreachable */
 		default:
 			fatal("ICE: unknown state %d", state);
