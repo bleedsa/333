@@ -14,7 +14,7 @@ typedef enum {
 	LEX_FLT_DEC, /* decimal */
 
 	/* strings */
-	LEX_QUOTE_L,
+	LEX_QUOTE,
 	LEX_STR,
 	LEX_QUOTE_R,
 
@@ -49,8 +49,9 @@ inl bool isverb2(C c) {
 
 C *tok_tostr(Tok *t) {
 	auto L = t->len;
-	auto buf = mk(C, L);
+	auto buf = mk(C, L+1);
 	memcpy(buf, t->ptr, Z(C)*L);
+	buf[L] = 0;
 	return buf;
 }
 
@@ -85,6 +86,7 @@ C *lex(C *src) {
 			else if (isalpha(c)) {state = LEX_ID;   goto init;}
 			else if (isdigit(c)) {state = LEX_INT;  goto init;}
 			else if (isverb(c))  {state = LEX_VERB; goto init;}
+			else if (c == '"')   {state = LEX_QUOTE;goto init;}
 			else if (c == '-' && isdigit(*(src + 1))) {
 				state = LEX_NEG; goto init;
 			} else ERR("invalid char during lexer pass: %c", c)
@@ -95,6 +97,7 @@ C *lex(C *src) {
 			goto start;
 		}
 
+		/* identifiers start with alpha but can contain alnum */
 		case LEX_ID: {
 			if (isalnum(c)) tlen++;
 			else {
@@ -104,6 +107,7 @@ C *lex(C *src) {
 			break;
 		}
 
+		/* an integer with or without a negative sign */
 		case LEX_INT: {
 			if (isdigit(c)) tlen++;
 			else {
@@ -113,6 +117,7 @@ C *lex(C *src) {
 			break;
 		}
 
+		/* the negative sign on a negative number */
 		case LEX_NEG: {
 			if (c == '-') {
 				tlen++;
@@ -121,10 +126,10 @@ C *lex(C *src) {
 			break;
 		}
 
+		/* verb 1 */
 		case LEX_VERB: {
 			tlen++;
 			if (isverb2(*(src + 1))) {
-				tlen++;
 				state = LEX_VERB2;
 				continue;
 			}
@@ -132,6 +137,7 @@ C *lex(C *src) {
 			goto push;
 		}
 
+		/* verb 2 */
 		case LEX_VERB2: {
 			tlen++;
 			ty = TOK_OPR;
@@ -144,6 +150,7 @@ C *lex(C *src) {
 
 		/* finish lexing a tok and add it to the vec */
 		push: {
+			println("tlen: %zu", tlen);
 			state = LEX_UNK;
 			lex_toks_reZ(&cap, &len);
 			LEX_TOKS[len++] = (Tok){
