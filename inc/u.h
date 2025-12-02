@@ -52,4 +52,6 @@ inl V pos_nl(Pos *p) {
 	p->line++, p->col = 1;
 }
 
+V init(V);
+
 #endif

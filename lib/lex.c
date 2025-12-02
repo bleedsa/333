@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 #include <err.h>
-#include <prs.h>
+#include <lex.h>
+#include <sym.h>
 
 typedef enum {
 	LEX_UNK,
@@ -60,8 +61,9 @@ inl V lex_toks_reZ(S *cap, S *len) {
 
 C *lex(C *src) {
 	C c, *ptr;
+	bool add_sym;
 	S cap = 8, len = 0, tlen = 0;
-	Pos p = pos_mk();
+	Pos p = pos_mk(), thisp = p;
 	TokTy ty;
 	LexState state = LEX_UNK;
 
@@ -90,7 +92,7 @@ C *lex(C *src) {
 			break;
 
 		init:
-			ptr = src, tlen = 0;
+			ptr = src, tlen = 0, thisp = p, add_sym = false;
 			goto start;
 		}
 
@@ -98,7 +100,7 @@ C *lex(C *src) {
 		case LEX_ID: {
 			if (isalnum(c)) tlen++;
 			else {
-				ty = TOK_ID;
+				ty = TOK_ID, add_sym = true;
 				goto push;
 			}
 			break;
@@ -165,7 +167,10 @@ C *lex(C *src) {
 
 		/* finish lexing a tok and add it to the vec */
 		push: {
+			/* reset state */
 			state = LEX_UNK;
+			
+			/* add the tok to LEX_TOKS */
 			lex_toks_reZ(&cap, &len);
 			LEX_TOKS[len++] = (Tok){
 				.ty = ty,
@@ -173,6 +178,14 @@ C *lex(C *src) {
 				.ptr = ptr,
 				.len = tlen,
 			};
+
+			/* optionally add symbol */
+			if (add_sym) {
+				C *sym = tok_tostr(LEX_TOKS+len-1);
+				sym_add(thisp, sym);
+				free(sym);
+			}
+
 			if (!c) goto eof;
 		}
 		}
