@@ -137,10 +137,11 @@ C *lex(C *src) {
 			tlen++;
 			if (isverb2(*(src + 1))) {
 				state = LEX_VERB2;
-				continue;
+				break;
+			} else {
+				ty = TOK_OPR;
+				goto push;
 			}
-			ty = TOK_OPR;
-			goto push;
 		}
 
 		/* verb 2 */
@@ -165,7 +166,7 @@ C *lex(C *src) {
 
 		/* rhs string quote */
 		case LEX_QUOTE_R:
-			ty = TOK_STR;
+			ty = TOK_STR, add_sym = true;
 			goto push;
 
 		/* should be unreachable */
