@@ -43,6 +43,13 @@ inl bool isverb2(C c) {
 	return !!(strchr(VERB2_CHRS, c));
 }
 
+bool tok_eq(Tok *x, Tok *y) {
+	return x->ty == y->ty
+		&& pos_eq(&x->pos, &y->pos)
+		&& strcmp(x->ptr, y->ptr)
+		&& x->len == y->len;
+}
+
 C *tok_tostr(Tok *t) {
 	auto L = t->len;
 	auto buf = mk(C, L+1);
@@ -73,7 +80,7 @@ C *lex(C *src) {
 
 	for (c = *src; true; src++, c = *src, pos_inc(&p)) {
 	start:
-		println("%c %d", c, c, state);
+		println("%c %d", c, state);
 		switch (state) {
 		/* unknown state. switch based on char type to set new state */
 		case LEX_UNK: {
@@ -187,6 +194,7 @@ C *lex(C *src) {
 			}
 
 			if (!c) goto eof;
+			goto start;
 		}
 		}
 	}

@@ -52,6 +52,11 @@ inl V pos_nl(Pos *p) {
 	p->line++, p->col = 1;
 }
 
+inl bool pos_eq(Pos *x, Pos *y) {
+	return x->line == y->line && x->col == y->col;
+}
+
 V init(V);
+V deinit(V);
 
 #endif

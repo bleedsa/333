@@ -1,5 +1,5 @@
-#ifndef __PRS_H__
-#define __PRS_H__
+#ifndef __LEX_H__
+#define __LEX_H__
 
 #include <str.h>
 
@@ -23,7 +23,9 @@ typedef struct {
 extern Tok TOK_EOF;
 extern Tok *LEX_TOKS;
 
+bool tok_eq(Tok *x, Tok *y);
 C *tok_tostr(Tok *t);
+
 C *lex(C *src);
 
 /* check if tok != 0 */

@@ -10,10 +10,20 @@ static V syms_reZ() {
 	}
 }
 
-V init(V) {
+V sym_free(Sym *x) {
+	free(x->ptr);
+}
+
+V sym_init(V) {
 	S cap = 8;
 	auto buf = mk(Sym, cap);
 	SYMS = (Syms){0, cap, buf};
+}
+
+V sym_deinit(V) {
+	for (S i = 0; i < SYMS.len; i++) {
+		sym_free(SYMS.ptr + i);
+	}
 }
 
 i64 fnd_str(C *s) {

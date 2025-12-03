@@ -32,7 +32,10 @@ I main(I argc, C **argv) {
 		i < SYMS.len;
 		i++, sym = SYMS.ptr + i
 	) {
-		println("sym: %zu, %zu\t%s", sym->pos.line, sym->pos.col, sym->ptr);
+		println(
+			"sym: %zu, %zu\t%s",
+			sym->pos.line, sym->pos.col, sym->ptr
+		);
 	}
 
 	free(LEX_TOKS);
