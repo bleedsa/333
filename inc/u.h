@@ -28,7 +28,6 @@ typedef void V;
 /* macros */
 #define Z(T) (sizeof(T))
 #define inl [[clang::always_inline]] inline
-#define CASE(c, x...) case c: { x; break; }
 #define fatal(f...) {fprintf(stderr, "FATAL: " f);putc('\n', stdout);exit(-1);}
 #define println(f...) {printf(f);putc('\n', stdout);}
 #define eprintln(f...){fprintf(stderr, f);putc('\n',stderr);}

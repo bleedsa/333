@@ -4,6 +4,9 @@
 #include <str.h>
 #include <lex.h>
 #include <sym.h>
+#include <sx.h>
+#include <prs.h>
+#include <err.h>
 
 I main(I argc, C **argv) {
 	C *err, *str;
@@ -37,6 +40,14 @@ I main(I argc, C **argv) {
 			sym->pos.line, sym->pos.col, sym->ptr
 		);
 	}
+
+	auto idx = parse();
+	if (idx < 0) {
+		eprintln("%s", prs_error());
+		return idx;
+	}
+
+	println("%d", PRS_SXS[i]->ty);
 
 	free(LEX_TOKS);
 	return 0;

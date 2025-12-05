@@ -2,19 +2,21 @@
 #define __PRS_H__
 
 #include <u.h>
-#include <err.h>
-#include <lex.h>
+#include <sx.h>
 
-extern S idx;
+typedef struct {
+	SX *ptr;
+	S cap, len;
+} SXsEnt;
 
-inl C *mtch(S tok) {
-	auto x = LEX_TOKS+tok, y = LEX_TOKS+idx;
-	if (tok_eq(x, y)) {
-		idx++;
-		return NULL;
-	} else return err_prs(x->pos, "failed to match token");
-}
+extern SX **PRS_SXS;
 
-C *Noun(S tok);
+V SXsEnt_free(SXsEnt *x);
+
+V prs_init(V);
+V prs_deinit(V);
+V prs_cpy_sxs(V);
+i64 parse(V);
+
 
 #endif

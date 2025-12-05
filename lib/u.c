@@ -1,12 +1,18 @@
 #include <u.h>
 #include <sym.h>
-#include <ast.h>
+#include <sx.h>
+#include <err.h>
+#include <prs.h>
 
 V init(V) {
 	sym_init();
-	ast_init();
+	sx_init();
+	prs_init();
 }
 
 V deinit(V) {
 	sym_deinit();
+	sx_deinit();
+	prs_deinit();
+	err_deinit();
 }
