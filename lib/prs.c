@@ -28,12 +28,11 @@ inl SXsEnt *push_SXsEnt(V) {
 
 	S cap = 8, len = 0;
 	auto ptr = mk(SX, cap);
-	PRS_SXENTS[ent_len] = (SXsEnt) {
+	PRS_SXENTS[ent_len++] = (SXsEnt) {
 		.ptr = ptr,
 		.cap = cap,
 		.len = len,
 	};
-	ent_len++;
 
 	return PRS_SXENTS + (ent_len - 1);
 }

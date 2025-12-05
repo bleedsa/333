@@ -68,7 +68,7 @@ inl V lex_toks_reZ(S *cap, S *len) {
 
 C *lex(C *src) {
 	C c, *ptr;
-	bool add_sym;
+	bool add_sym, inc;
 	S cap = 8, len = 0, tlen = 0;
 	Pos p = pos_mk(), thisp = p;
 	TokTy ty;
@@ -99,7 +99,8 @@ C *lex(C *src) {
 			break;
 
 		init:
-			ptr = src, tlen = 0, thisp = p, add_sym = false;
+			ptr = src, tlen = 0, thisp = p,
+			add_sym = false, inc = false;
 			goto start;
 		}
 
@@ -137,9 +138,9 @@ C *lex(C *src) {
 			tlen++;
 			if (isverb2(*(src + 1))) {
 				state = LEX_VERB2;
-				break;
+				continue;
 			} else {
-				ty = TOK_OPR;
+				ty = TOK_OPR, inc = true;
 				goto push;
 			}
 		}
@@ -147,7 +148,7 @@ C *lex(C *src) {
 		/* verb 2 */
 		case LEX_VERB2: {
 			tlen++;
-			ty = TOK_OPR;
+			ty = TOK_OPR, inc = true;
 			goto push;
 		}
 
@@ -195,7 +196,7 @@ C *lex(C *src) {
 			}
 
 			if (!c) goto eof;
-			goto start;
+			if (!inc) goto start; else continue;
 		}
 		}
 	}
