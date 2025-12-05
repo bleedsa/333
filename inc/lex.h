@@ -4,13 +4,14 @@
 #include <str.h>
 
 typedef enum {
-	TOK_I,   /* int */
-	TOK_U,   /* unsigned */
-	TOK_F,   /* float */
-	TOK_C,   /* char */
-	TOK_STR, /* string */
-	TOK_ID,  /* identifier */
-	TOK_OPR, /* operators */
+	TOK_I,    /* int */
+	TOK_U,    /* unsigned */
+	TOK_F,    /* float */
+	TOK_C,    /* char */
+	TOK_STR,  /* string */
+	TOK_ID,   /* identifier */
+	TOK_LPRN, /* ( */
+	TOK_RPRN, /* ) */
 } TokTy;
 
 typedef struct {
