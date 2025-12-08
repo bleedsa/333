@@ -23,7 +23,7 @@ C *err_lex(Pos p, CC *fmt, ...) {
 	str_append(&str, buf);
 	free(buf);
 
-	str_append(&str, "\n\t");
+	str_append(&str, "\n    ");
 	if (0 > vasprintf(&buf, fmt, args)) fatal("asprintf!!");
 	str_append(&str, buf);
 	free(buf);
@@ -44,7 +44,7 @@ V err_prs(Pos p, CC *fmt, ...) {
 	str_append(&str, buf);
 	free(buf);
 
-	str_append(&str, "\n\t");
+	str_append(&str, "\n    ");
 	if (0 > vasprintf(&buf, fmt, args)) fatal("asprintf!!");
 	str_append(&str, buf);
 	free(buf);

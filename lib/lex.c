@@ -31,7 +31,7 @@ Tok *LEX_TOKS;
 static CC *ID_CHRS =
 	"qwertyuiopasdfghjklzxcvbnm"
 	"QWERTYUIOPASDFGHJKLZXCVBNM"
-	"!@#$%^&*_+|\\:'<,>.?/~";
+	"!@#$%^&*_+|\\:'<,>.?/~-=";
 
 /* is c a valid identifier char? */
 inl bool isid(C c) {
@@ -82,7 +82,7 @@ C *lex(C *src) {
 	memset(LEX_TOKS, 0, Z(Tok)*cap);
 
 	/* state machine hot loop is here */
-	for (c = *src; true; src++, c = *src, pos_inc(&p)) {
+	for (c = *src;; src++, c = *src, pos_inc(&p)) {
 	start:
 		println("%c %d", c, state);
 		switch (state) {
@@ -117,7 +117,7 @@ C *lex(C *src) {
 
 		/* identifiers start with alpha but can contain alnum */
 		case LEX_ID: {
-			if (isid(c)||isdigit(c)) tlen++;
+			if (c && (isid(c)||isdigit(c))) tlen++;
 			else {
 				ty = TOK_ID, add_sym = true;
 				goto push;
@@ -189,10 +189,9 @@ C *lex(C *src) {
 				free(sym);
 			}
 
-			/* jump somewhere else */
-			if (!c) goto eof;
 			/* goto start doesn't inc the lexer */
-			goto start;
+			println("c: '%c'", c);
+			if (c) goto start; else goto eof;
 
 		/* jump here to push a single char token */
 		push_c:
@@ -207,8 +206,7 @@ C *lex(C *src) {
 				.len = 1,
 			};
 
-			if (!c) goto eof;
-			continue;
+			if (c) continue; else goto eof;
 		}
 	}
 

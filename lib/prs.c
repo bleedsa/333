@@ -23,7 +23,7 @@ inl V SXsEnt_reZ(SXsEnt *x) {
 }
 
 /* push a new SXsEnt to PRS_SXENTS and return a pointer to it */
-inl SXsEnt *push_SXsEnt(V) {
+inl SXsEnt *new_SXsEnt(V) {
 	PRS_SXENTS_reZ();
 
 	S cap = 8, len = 0;
@@ -61,7 +61,9 @@ V prs_deinit(V) {
 }
 
 i64 parse(V) {
-	auto en = push_SXsEnt();
+	auto en = new_SXsEnt();
+	prs_cpy_sxs();
+	return 0;
 	goto err;
 
 err:
